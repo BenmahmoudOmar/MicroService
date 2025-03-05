@@ -56,6 +56,8 @@ public class MessageService implements IMessageService {
         Message message = messageRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Message not found"));
         message.setContent(newContent);
+        message.setStatus(MessageStatus.SENT);
+        message.setTimestamp(LocalDateTime.now());
         Message updatedMessage = messageRepository.save(message);
 
         // Émettre un message JSON avec l'ID du message mis à jour
@@ -136,6 +138,26 @@ public class MessageService implements IMessageService {
         return "/messages/upload/" + fileName; // Adjust the URL as needed
     }
 
+    public String uploadAudio(MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new IOException("File is empty");
+        }
+
+        // Create the directory if it doesn't exist
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // Save the file to the specified directory
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path filePath = Paths.get(uploadDir, fileName);
+        Files.copy(file.getInputStream(), filePath);
+
+        // Return the URL of the uploaded audio
+        return "/messages/upload/" + fileName; // Adjust the URL as needed
+    }
+
     @Override
     public Message sendMessageWithAttachment(Message message, MultipartFile file, Conversation conversation) throws IOException {
         String attachmentUrl;
@@ -151,6 +173,9 @@ public class MessageService implements IMessageService {
                 // Upload the PDF and get the URL
                 attachmentUrl = uploadPdf(file);
                 message.setMessageType(MessageType.PDF); // Set message type to PDF
+            }else if (fileType.startsWith("audio/")) { // Check for audio files
+                attachmentUrl = uploadAudio(file); // New method for audio upload
+                message.setMessageType(MessageType.AUDIO); // Set message type to AUDIO
             } else {
                 throw new IllegalArgumentException("Unsupported file type: " + fileType);
             }

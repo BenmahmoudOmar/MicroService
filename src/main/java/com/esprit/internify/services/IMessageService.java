@@ -17,6 +17,7 @@ public interface IMessageService {
     Message updateMessageStatusToRead(Long messageId);
     String uploadImage(MultipartFile file) throws IOException;
     String uploadPdf(MultipartFile file) throws IOException;
+    String uploadAudio(MultipartFile file) throws IOException;
     Message sendMessageWithAttachment(Message message, MultipartFile file, Conversation conversation) throws IOException;
     Resource downloadImage(String fileName);
 }
