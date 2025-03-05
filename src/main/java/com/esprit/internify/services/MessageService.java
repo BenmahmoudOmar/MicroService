@@ -40,6 +40,7 @@ public class MessageService implements IMessageService {
     @Override
     public Message sendMessage(Message message) {
         message.setId(null);
+        message.setTimestamp(LocalDateTime.now());
         Message savedMessage = messageRepository.save(message);
         // Émettre le message créé
         messagingTemplate.convertAndSend("/topic/messages",savedMessage);
@@ -215,5 +216,18 @@ public class MessageService implements IMessageService {
             System.out.println("❌ Erreur lors du chargement : " + e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public void togglePinMessage(Long messageId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+        message.setIsPinned(!message.getIsPinned()); // Toggle the isPinned status
+        Message pinnedMessage = messageRepository.save(message);
+
+        Map<String, Object> pinMessage = new HashMap<>();
+        pinMessage.put("action", message.getIsPinned()?"pinned":"unpinned");
+        pinMessage.put("message", pinnedMessage);
+        messagingTemplate.convertAndSend("/topic/messages", pinMessage);
     }
 }

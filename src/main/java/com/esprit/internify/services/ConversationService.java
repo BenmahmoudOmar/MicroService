@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ public class ConversationService implements IConversationService{
     @Override
     public Conversation createConversation(Conversation conversation) {
         conversation.setId(null);
+        conversation.setCreatedAt(LocalDateTime.now());
+        conversation.setLastMessageTimestamp(LocalDateTime.now());
         Conversation savedConversation = conversationRepository.save(conversation);
         messagingTemplate.convertAndSend("/topic/conversations", savedConversation);
         return savedConversation;

@@ -112,4 +112,10 @@ public class MessageController {
                 .headers(headers)
                 .body(resource);
     }
+
+    @PutMapping("/{id}/pin")
+    public ResponseEntity<Void> pinMessage(@PathVariable Long id) {
+        messageService.togglePinMessage(id);
+        return ResponseEntity.ok().build(); // Return a 200 OK response
+    }
 }

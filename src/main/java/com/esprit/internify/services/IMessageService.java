@@ -20,4 +20,5 @@ public interface IMessageService {
     String uploadAudio(MultipartFile file) throws IOException;
     Message sendMessageWithAttachment(Message message, MultipartFile file, Conversation conversation) throws IOException;
     Resource downloadImage(String fileName);
+    void togglePinMessage(Long messageId);
 }
