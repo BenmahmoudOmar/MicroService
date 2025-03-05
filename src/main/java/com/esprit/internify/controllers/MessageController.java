@@ -37,4 +37,9 @@ public class MessageController {
         messageService.deleteMessage(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{messageId}/status")
+    public ResponseEntity<Message> updateMessageStatusToRead(@PathVariable Long messageId) {
+        return ResponseEntity.ok(messageService.updateMessageStatusToRead(messageId));
+    }
 }

@@ -1,11 +1,15 @@
 package com.esprit.internify.services;
 
 import com.esprit.internify.entities.Message;
+import com.esprit.internify.entities.MessageStatus;
 import com.esprit.internify.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -58,5 +62,18 @@ public class MessageService implements IMessageService {
         deleteMessage.put("action", "deleted");
         deleteMessage.put("message", deletedMessage);
         messagingTemplate.convertAndSend("/topic/messages", deleteMessage);
+    }
+
+    @Override
+    public Message updateMessageStatusToRead(Long messageId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+        message.setStatus(MessageStatus.READ);
+        message.setReadAt(LocalDateTime.now()); // Set the read timestamp
+        Message updatedMessage = messageRepository.save(message);
+
+        // Emit the updated message status
+        messagingTemplate.convertAndSend("/topic/messages", message);
+        return updatedMessage;
     }
 }

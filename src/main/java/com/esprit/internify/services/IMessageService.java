@@ -9,4 +9,5 @@ public interface IMessageService {
     Optional<Message> getMessageById(Long messageId);
     Message updateMessage(Long messageId, String newContent);
     void deleteMessage(Long messageId);
+    Message updateMessageStatusToRead(Long messageId);
 }
