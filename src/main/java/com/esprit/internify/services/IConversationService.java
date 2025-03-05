@@ -11,4 +11,5 @@ public interface IConversationService {
     Optional<Conversation> getConversationById(Long id);
     void deleteConversation(Long id);
     List<Message> getMessagesByConversation(Long conversationId);
+    List<Conversation> getUserConversationsSortedByLastMessage(Long userId);
 }

@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -18,6 +20,7 @@ public class ConversationService implements IConversationService{
 
     @Override
     public Conversation createConversation(Conversation conversation) {
+        conversation.setId(null);
         Conversation savedConversation = conversationRepository.save(conversation);
         messagingTemplate.convertAndSend("/topic/conversations", savedConversation);
         return savedConversation;
@@ -31,7 +34,11 @@ public class ConversationService implements IConversationService{
     @Override
     public void deleteConversation(Long id) {
         conversationRepository.deleteById(id);
-        messagingTemplate.convertAndSend("/topic/conversations", "deleted:" + id);
+        // Émettre un message JSON avec l'ID de la conversation supprimée
+        Map<String, Object> message = new HashMap<>();
+        message.put("action", "deleted");
+        message.put("id", id);
+        messagingTemplate.convertAndSend("/topic/conversations", message); // Émettre l'événement de suppression
     }
 
     @Override
@@ -42,5 +49,10 @@ public class ConversationService implements IConversationService{
 
         messagingTemplate.convertAndSend("/topic/conversations/" + conversationId + "/messages", messages);
         return messages;
+    }
+
+    @Override
+    public List<Conversation> getUserConversationsSortedByLastMessage(Long userId) {
+        return conversationRepository.findByUserIdOrderByLastMessageTimestamp(userId);
     }
 }

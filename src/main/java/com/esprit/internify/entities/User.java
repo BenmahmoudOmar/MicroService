@@ -10,16 +10,15 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonIgnore
     @Column(nullable = false, unique = true)
     private String username;
 
-    @JsonIgnore
     @Column(nullable = false, unique = true)
     private String email;
 

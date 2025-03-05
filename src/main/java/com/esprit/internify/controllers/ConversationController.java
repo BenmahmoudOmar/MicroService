@@ -37,4 +37,9 @@ public class ConversationController {
     public ResponseEntity<List<Message>> getMessagesByConversation(@PathVariable Long id) {
         return ResponseEntity.ok(conversationService.getMessagesByConversation(id));
     }
+
+    @GetMapping("/user/{userId}")
+    public List<Conversation> getUserConversations(@PathVariable Long userId) {
+        return conversationService.getUserConversationsSortedByLastMessage(userId);
+    }
 }
