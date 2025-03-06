@@ -22,10 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -229,5 +226,65 @@ public class MessageService implements IMessageService {
         pinMessage.put("action", message.getIsPinned()?"pinned":"unpinned");
         pinMessage.put("message", pinnedMessage);
         messagingTemplate.convertAndSend("/topic/messages", pinMessage);
+    }
+
+    @Override
+    public Map<String, Object> getTotalMessagesAndTypesByUser (Long userId) {
+        List<Object[]> results = messageRepository.countTotalMessagesAndTypesByUser (userId);
+        Map<String, Object> resultMap = new HashMap<>();
+        long totalMessages = 0;
+
+        for (Object[] result : results) {
+            totalMessages += (Long) result[0]; // Accumulate total messages
+            resultMap.put(((MessageType) result[1]).name(), (Long) result[0]); // Map message type to count
+        }
+
+        resultMap.put("TOTAL", totalMessages); // Add total messages to the map
+        return resultMap;
+    }
+
+    @Override
+    public Map<String, Object> getTotalSentMessagesAndTypesByUser (Long userId) {
+        List<Object[]> results = messageRepository.countTotalSentMessagesAndTypesByUser (userId);
+        Map<String, Object> resultMap = new HashMap<>();
+        long totalSentMessages = 0;
+
+        for (Object[] result : results) {
+            totalSentMessages += (Long) result[0]; // Accumulate total sent messages
+            resultMap.put(((MessageType) result[1]).name(), (Long) result[0]); // Map message type to count
+        }
+
+        resultMap.put("TOTAL", totalSentMessages); // Add total sent messages to the map
+        return resultMap;
+    }
+
+    @Override
+    public Map<String, Object> getTotalReceivedMessagesAndTypesByUser (Long userId) {
+        List<Object[]> results = messageRepository.countTotalReceivedMessagesAndTypesByUser (userId);
+        Map<String, Object> resultMap = new HashMap<>();
+        long totalReceivedMessages = 0;
+
+        for (Object[] result : results) {
+            totalReceivedMessages += (Long) result[0]; // Accumulate total received messages
+            resultMap.put(((MessageType) result[1]).name(), (Long) result[0]); // Map message type to count
+        }
+
+        resultMap.put("TOTAL", totalReceivedMessages); // Add total received messages to the map
+        return resultMap;
+    }
+
+    @Override
+    public Map<String, Object> getTotalMessagesAndTypes() {
+        List<Object[]> results = messageRepository.countTotalMessagesAndTypes();
+        Map<String, Object> resultMap = new HashMap<>();
+        long totalMessages = 0;
+
+        for (Object[] result : results) {
+            totalMessages += (Long) result[0]; // Accumulate total messages
+            resultMap.put(((MessageType) result[1]).name(), (Long) result[0]); // Map message type to count
+        }
+
+        resultMap.put("TOTAL", totalMessages); // Add total received messages to the map
+        return resultMap;
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface IMessageService {
@@ -21,4 +22,8 @@ public interface IMessageService {
     Message sendMessageWithAttachment(Message message, MultipartFile file, Conversation conversation) throws IOException;
     Resource downloadImage(String fileName);
     void togglePinMessage(Long messageId);
+    Map<String, Object> getTotalMessagesAndTypesByUser (Long userId);
+    Map<String, Object> getTotalSentMessagesAndTypesByUser (Long userId);
+    Map<String, Object> getTotalReceivedMessagesAndTypesByUser (Long userId);
+    Map<String, Object> getTotalMessagesAndTypes();
 }

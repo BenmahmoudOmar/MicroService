@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -117,5 +118,29 @@ public class MessageController {
     public ResponseEntity<Void> pinMessage(@PathVariable Long id) {
         messageService.togglePinMessage(id);
         return ResponseEntity.ok().build(); // Return a 200 OK response
+    }
+
+    @GetMapping("/user/{userId}/message-stats")
+    public ResponseEntity<Map<String, Object>> getMessageStats(@PathVariable Long userId) {
+        Map<String, Object> messageStats = messageService.getTotalMessagesAndTypesByUser(userId);
+        return ResponseEntity.ok(messageStats);
+    }
+
+    @GetMapping("/user/{userId}/sent-message-stats")
+    public ResponseEntity<Map<String, Object>> getSentMessageStats(@PathVariable Long userId) {
+        Map<String, Object> messageStats = messageService.getTotalSentMessagesAndTypesByUser(userId);
+        return ResponseEntity.ok(messageStats);
+    }
+
+    @GetMapping("/user/{userId}/received-message-stats")
+    public ResponseEntity<Map<String, Object>> getReceivedMessageStats(@PathVariable Long userId) {
+        Map<String, Object> messageStats = messageService.getTotalReceivedMessagesAndTypesByUser(userId);
+        return ResponseEntity.ok(messageStats);
+    }
+
+    @GetMapping("/message-stats")
+    public ResponseEntity<Map<String, Object>> getMessageStats() {
+        Map<String, Object> messageStats = messageService.getTotalMessagesAndTypes();
+        return ResponseEntity.ok(messageStats);
     }
 }
