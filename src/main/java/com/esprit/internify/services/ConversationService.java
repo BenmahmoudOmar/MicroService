@@ -37,11 +37,11 @@ public class ConversationService implements IConversationService{
     @Override
     public void deleteConversation(Long id) {
         conversationRepository.deleteById(id);
-        // Émettre un message JSON avec l'ID de la conversation supprimée
+
         Map<String, Object> message = new HashMap<>();
         message.put("action", "deleted");
         message.put("id", id);
-        messagingTemplate.convertAndSend("/topic/conversations", message); // Émettre l'événement de suppression
+        messagingTemplate.convertAndSend("/topic/conversations", message);
     }
 
     @Override
