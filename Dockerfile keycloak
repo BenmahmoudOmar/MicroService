@@ -1,0 +1,14 @@
+FROM quay.io/keycloak/keycloak:latest
+
+# Set environment variables for admin credentials
+ENV KEYCLOAK_ADMIN=admin
+ENV KEYCLOAK_ADMIN_PASSWORD=admin
+
+# Copy custom realm JSON to the configuration directory
+COPY my-realm.json /opt/keycloak/data/import/
+
+# Expose port 8080 for accessing the Keycloak admin console
+EXPOSE 8080
+
+# Start Keycloak and import the realm
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm"]

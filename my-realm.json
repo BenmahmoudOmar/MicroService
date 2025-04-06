@@ -1,0 +1,62 @@
+{
+  "realm": "ruby",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "gateway_service",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "Jn1XVRWiGnDLsEjocv7O5kDezdyzndzq",
+
+      "bearerOnly": false
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "A regular user"
+      },
+      {
+        "name": "entreprise",
+        "description": "Administrator role for entreprise"
+      },
+      {
+        "name": "Admin",
+        "description": "Administrator role with full privileges"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "123123"
+        }
+      ],
+      "realmRoles": [
+        "Admin"
+      ]
+    },
+    {
+      "username": "admin1",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "123123"
+        }
+      ],
+      "realmRoles": [
+        "Admin"
+      ]
+    }
+  ]
+}

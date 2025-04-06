@@ -1,0 +1,41 @@
+[ {
+  "Username" : "yassinehmedi",
+  "userAgentString" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "browserName" : "Chrome",
+  "browserVersion" : "120.0.0.0",
+  "deviceName" : "Dell XPS 15",
+  "deviceType" : "Desktop",
+  "osName" : "Windows",
+  "osVersion" : "10",
+  "clientIp" : "192.168.1.15"
+}, {
+  "Username" : "yassinehmedi",
+  "userAgentString" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "browserName" : "Chrome",
+  "browserVersion" : "120.0.0.0",
+  "deviceName" : "Dell XPS 15",
+  "deviceType" : "Desktop",
+  "osName" : "Windows",
+  "osVersion" : "10",
+  "clientIp" : "192.168.1.15"
+}, {
+  "Username" : "yassinehmedi",
+  "userAgentString" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "browserName" : "Chrome",
+  "browserVersion" : "120.0.0.0",
+  "deviceName" : "Dell XPS 15",
+  "deviceType" : "Desktop",
+  "osName" : "Windows",
+  "osVersion" : "10",
+  "clientIp" : "192.168.1.15"
+}, {
+  "Username" : "yassinehemedi",
+  "userAgentString" : "Java/20",
+  "browserName" : "Java",
+  "browserVersion" : "20",
+  "deviceName" : "Oracle Java",
+  "deviceType" : "Robot",
+  "osName" : "Cloud",
+  "osVersion" : "??",
+  "clientIp" : "197.238.242.118"
+} ]
