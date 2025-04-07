@@ -2,10 +2,12 @@ package com.esprit.internify.services;
 
 import com.esprit.internify.entities.Conversation;
 import com.esprit.internify.entities.Message;
+import com.esprit.internify.entities.MessageStatus;
 import com.esprit.internify.repository.ConversationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -55,7 +57,24 @@ public class ConversationService implements IConversationService{
     }
 
     @Override
+    @Transactional // Ensure this method runs in a transaction
     public List<Conversation> getUserConversationsSortedByLastMessage(Long userId) {
-        return conversationRepository.findByUserIdOrderByLastMessageTimestamp(userId);
+        // Fetch conversations for the user
+        List<Conversation> conversations = conversationRepository.findByUserIdOrderByLastMessageTimestamp(userId);
+
+        // Update unreadMessagesCount for each conversation
+        for (Conversation conversation : conversations) {
+            // Count SENT messages
+            int sentMessagesCount = (int) conversation.getMessages().stream()
+                    .filter(message -> message.getStatus() == MessageStatus.SENT && message.getReceiver().getId() == userId) // Assuming MessageStatus is an enum
+                    .count();
+
+            // Update unreadMessagesCount
+            conversation.setUnreadMessagesCount(sentMessagesCount);
+
+            // Save the updated conversation
+            conversationRepository.save(conversation); // Save the updated conversation
+        }
+        return conversations;
     }
 }

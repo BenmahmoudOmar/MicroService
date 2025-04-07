@@ -46,10 +46,10 @@ public class MessageController {
         return ResponseEntity.ok(messageService.updateMessage(id, newContent));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<String> deleteMessage(@PathVariable Long id) {
         messageService.deleteMessage(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Deleted");
     }
 
     @PutMapping("/{messageId}/status")

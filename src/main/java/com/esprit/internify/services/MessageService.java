@@ -4,6 +4,7 @@ import com.esprit.internify.entities.Conversation;
 import com.esprit.internify.entities.Message;
 import com.esprit.internify.entities.MessageStatus;
 import com.esprit.internify.entities.MessageType;
+import com.esprit.internify.repository.ConversationRepository;
 import com.esprit.internify.repository.MessageRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -27,6 +29,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class MessageService implements IMessageService {
     private final MessageRepository messageRepository;
+    private final ConversationRepository conversationRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
     @Getter
@@ -34,12 +37,23 @@ public class MessageService implements IMessageService {
     private String uploadDir;
 
     @Override
+    @Transactional
     public Message sendMessage(Message message) {
         message.setId(null);
         message.setTimestamp(LocalDateTime.now());
-        Message savedMessage = messageRepository.save(message);
+        Conversation conversation = message.getConversation();
+        if (conversation != null) {
+            Conversation managedConversation = conversationRepository.findById(conversation.getId())
+                    .orElseThrow(() -> new RuntimeException("Conversation not found"));
+            managedConversation.setLastMessageTimestamp(LocalDateTime.now());
 
-        messagingTemplate.convertAndSend("/topic/messages",savedMessage);
+            managedConversation.getMessages().add(message);
+            message.setConversation(managedConversation);
+        }
+        Message savedMessage = messageRepository.save(message);
+        messagingTemplate.convertAndSend("/topic/conversations", conversation);
+        messagingTemplate.convertAndSend("/topic/messages", savedMessage);
+
         return savedMessage;
     }
 
@@ -144,6 +158,7 @@ public class MessageService implements IMessageService {
     }
 
     @Override
+    @Transactional
     public Message sendMessageWithAttachment(Message message, MultipartFile file, Conversation conversation) throws IOException {
         String attachmentUrl;
 
@@ -168,10 +183,15 @@ public class MessageService implements IMessageService {
 
         message.setAttachmentUrl(attachmentUrl);
         message.setTimestamp(LocalDateTime.now());
-        message.setConversation(conversation);
+        Conversation managedConversation = conversationRepository.findById(conversation.getId())
+                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+        managedConversation.setLastMessageTimestamp(LocalDateTime.now());
+        managedConversation.getMessages().add(message);
+        message.setConversation(managedConversation);
         message.setId(null);
         Message savedMessage = messageRepository.save(message);
 
+        messagingTemplate.convertAndSend("/topic/conversations", conversation);
         messagingTemplate.convertAndSend("/topic/messages", savedMessage);
         return savedMessage;
     }
