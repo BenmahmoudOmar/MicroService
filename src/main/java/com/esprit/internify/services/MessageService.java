@@ -37,7 +37,6 @@ public class MessageService implements IMessageService {
     private String uploadDir;
 
     @Override
-    @Transactional
     public Message sendMessage(Message message) {
         message.setId(null);
         message.setTimestamp(LocalDateTime.now());
@@ -158,7 +157,6 @@ public class MessageService implements IMessageService {
     }
 
     @Override
-    @Transactional
     public Message sendMessageWithAttachment(Message message, MultipartFile file, Conversation conversation) throws IOException {
         String attachmentUrl;
 

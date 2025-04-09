@@ -3,22 +3,22 @@ package com.esprit.internify.services;
 import com.esprit.internify.entities.Conversation;
 import com.esprit.internify.entities.Message;
 import com.esprit.internify.entities.MessageStatus;
+import com.esprit.internify.entities.User;
 import com.esprit.internify.repository.ConversationRepository;
+import com.esprit.internify.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class ConversationService implements IConversationService{
     private final ConversationRepository conversationRepository;
+    private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
     @Override
@@ -57,10 +57,9 @@ public class ConversationService implements IConversationService{
     }
 
     @Override
-    @Transactional // Ensure this method runs in a transaction
     public List<Conversation> getUserConversationsSortedByLastMessage(Long userId) {
         // Fetch conversations for the user
-        List<Conversation> conversations = conversationRepository.findByUserIdOrderByLastMessageTimestamp(userId);
+        List<Conversation> conversations = conversationRepository.findByUserId(userId);
 
         // Update unreadMessagesCount for each conversation
         for (Conversation conversation : conversations) {
@@ -75,6 +74,36 @@ public class ConversationService implements IConversationService{
             // Save the updated conversation
             conversationRepository.save(conversation); // Save the updated conversation
         }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        conversations.sort(Comparator.comparing((Conversation c) -> !c.getUserFavorites().contains(user)).reversed()
+                .thenComparing(Conversation::getLastMessageTimestamp).reversed());
         return conversations;
+    }
+
+    @Override
+    public Conversation toggleFavorite(Long conversationId, Long userId) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Toggle the favorite status for the specific user
+        if (conversation.getUserFavorites().contains(user)) {
+            // If the user is already a favorite, remove them
+            conversation.getUserFavorites().remove(user);
+        } else {
+            // If the user is not a favorite, add them
+            conversation.getUserFavorites().add(user);
+        }
+
+        // Save the updated conversation
+        Conversation updatedConversation = conversationRepository.save(conversation);
+
+        // Send the updated conversation to the WebSocket topic
+        messagingTemplate.convertAndSend("/topic/conversations", updatedConversation);
+
+        return updatedConversation;
     }
 }

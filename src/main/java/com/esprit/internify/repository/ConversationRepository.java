@@ -11,6 +11,6 @@ import java.util.List;
 
 @Repository
 public interface ConversationRepository extends JpaRepository<Conversation, Long> {
-    @Query("SELECT c FROM Conversation c JOIN c.users u WHERE u.id = :userId ORDER BY c.lastMessageTimestamp DESC")
-    List<Conversation> findByUserIdOrderByLastMessageTimestamp(@Param("userId") Long userId);
+    @Query("SELECT c FROM Conversation c JOIN c.users u WHERE u.id = :userId")
+    List<Conversation> findByUserId(@Param("userId") Long userId);
 }

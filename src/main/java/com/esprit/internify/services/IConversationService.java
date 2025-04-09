@@ -12,4 +12,5 @@ public interface IConversationService {
     void deleteConversation(Long id);
     List<Message> getMessagesByConversation(Long conversationId);
     List<Conversation> getUserConversationsSortedByLastMessage(Long userId);
+    Conversation toggleFavorite(Long conversationId, Long userId);
 }

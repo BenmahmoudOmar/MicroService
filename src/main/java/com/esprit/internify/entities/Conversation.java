@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -31,7 +33,13 @@ public class Conversation {
 
     private LocalDateTime lastMessageTimestamp = LocalDateTime.now();
 
-    private Boolean isFavorite = false;
+    @ManyToMany
+    @JoinTable(
+            name = "conversation_users_favorites",
+            joinColumns = @JoinColumn(name = "conversation_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> userFavorites = new ArrayList<>();
     private Integer unreadMessagesCount = 0;
     private Boolean notificationEnabled = true;
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -42,4 +42,10 @@ public class ConversationController {
     public List<Conversation> getUserConversations(@PathVariable Long userId) {
         return conversationService.getUserConversationsSortedByLastMessage(userId);
     }
+
+    @PutMapping("/{id}/favorite/{userId}")
+    public ResponseEntity<Conversation> toggleFavorite(@PathVariable Long id, @PathVariable Long userId) {
+        Conversation updatedConversation = conversationService.toggleFavorite(id, userId);
+        return ResponseEntity.ok(updatedConversation);
+    }
 }
