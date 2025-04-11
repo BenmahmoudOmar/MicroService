@@ -106,4 +106,48 @@ public class ConversationService implements IConversationService{
 
         return updatedConversation;
     }
+
+    @Override
+    public Conversation toggleMute(Long conversationId, Long userId) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User  not found"));
+
+        // Toggle the mute status for the specific user
+        if (conversation.getMutedBy().contains(user)) {
+            // If the user is already muted, unmute them
+            conversation.getMutedBy().remove(user);
+        } else {
+            // If the user is not muted, mute them
+            conversation.getMutedBy().add(user);
+        }
+
+        // Save the updated conversation
+        Conversation updatedConversation = conversationRepository.save(conversation);
+
+        // Send the updated conversation to the WebSocket topic
+        messagingTemplate.convertAndSend("/topic/conversations", updatedConversation);
+
+        return updatedConversation;
+    }
+
+    @Override
+    public List<Message> searchMessagesInConversation(Long conversationId, String content, String sentDateStr) {
+        LocalDateTime startOfDay = null;
+        LocalDateTime endOfDay = null;
+
+        if (sentDateStr != null && !sentDateStr.isEmpty()) {
+            if (sentDateStr.endsWith("Z")) {
+                sentDateStr = sentDateStr.replace("Z", "");
+            }
+            LocalDateTime parsedDate = LocalDateTime.parse(sentDateStr);
+            startOfDay = parsedDate.toLocalDate().atStartOfDay();
+            endOfDay = startOfDay.plusDays(1).minusNanos(1); // Covers full day
+        }
+
+        return conversationRepository.searchMessagesInConversation(conversationId, content, startOfDay, endOfDay);
+    }
+
 }

@@ -41,7 +41,13 @@ public class Conversation {
     )
     private List<User> userFavorites = new ArrayList<>();
     private Integer unreadMessagesCount = 0;
-    private Boolean notificationEnabled = true;
+    @ManyToMany
+    @JoinTable(
+            name = "conversation_users_muted", // New table for muted users
+            joinColumns = @JoinColumn(name = "conversation_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> mutedBy = new ArrayList<>();
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Message> messages = new ArrayList<>();

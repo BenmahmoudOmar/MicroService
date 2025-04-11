@@ -52,6 +52,7 @@ public class MessageService implements IMessageService {
         Message savedMessage = messageRepository.save(message);
         messagingTemplate.convertAndSend("/topic/conversations", conversation);
         messagingTemplate.convertAndSend("/topic/messages", savedMessage);
+        messagingTemplate.convertAndSend("/topic/notifications/" + savedMessage.getReceiver().getId(), savedMessage);
 
         return savedMessage;
     }
@@ -191,6 +192,7 @@ public class MessageService implements IMessageService {
 
         messagingTemplate.convertAndSend("/topic/conversations", conversation);
         messagingTemplate.convertAndSend("/topic/messages", savedMessage);
+        messagingTemplate.convertAndSend("/topic/notifications/" + savedMessage.getReceiver().getId(), savedMessage);
         return savedMessage;
     }
 
