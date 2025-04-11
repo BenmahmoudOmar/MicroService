@@ -11,6 +11,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -150,4 +151,37 @@ public class ConversationService implements IConversationService{
         return conversationRepository.searchMessagesInConversation(conversationId, content, startOfDay, endOfDay);
     }
 
+    @Override
+    public List<Conversation> getAllConversations(){
+        return conversationRepository.findAll();
+    }
+
+    @Override
+    public Map<String, Object> getConversationStats(Long conversationId) {
+        Map<String, Object> stats = new HashMap<>();
+
+        Long totalMessages = conversationRepository.countTotalMessagesInConversation(conversationId);
+        List<Object[]> messageTypeCounts = conversationRepository.countMessagesByTypeInConversation(conversationId);
+        List<LocalDateTime> sentDates = conversationRepository.getAllSentDatesByConversation(conversationId);
+
+        Map<String, Long> typeCounts = new HashMap<>();
+        for (Object[] obj : messageTypeCounts) {
+            typeCounts.put(obj[1].toString(), (Long) obj[0]);
+        }
+
+        // Calculate average time difference
+        long totalDiff = 0;
+        for (int i = 1; i < sentDates.size(); i++) {
+            totalDiff += Duration.between(sentDates.get(i - 1), sentDates.get(i)).getSeconds();
+        }
+
+        double avgSeconds = sentDates.size() > 1 ? (double) totalDiff / (sentDates.size() - 1) : 0;
+        String avgFormatted = String.format("%.2f seconds", avgSeconds);
+
+        stats.put("totalMessages", totalMessages);
+        stats.put("typeCounts", typeCounts);
+        stats.put("averageTimeBetweenMessages", avgFormatted);
+
+        return stats;
+    }
 }

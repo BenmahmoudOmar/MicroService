@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -21,6 +22,11 @@ public class ConversationController {
     @PostMapping
     public ResponseEntity<Conversation> createConversation(@RequestBody Conversation conversation) {
         return ResponseEntity.ok(conversationService.createConversation(conversation));
+    }
+
+    @GetMapping
+    public List<Conversation> getAllConversations() {
+        return conversationService.getAllConversations();
     }
 
     @GetMapping("/{id}")
@@ -67,5 +73,10 @@ public class ConversationController {
         List<Message> messages = conversationService.searchMessagesInConversation(conversationId, content, sentDate);
 
         return messages;
+    }
+
+    @GetMapping("/{conversationId}/stats")
+    public ResponseEntity<Map<String, Object>> getConversationStatistics(@PathVariable Long conversationId) {
+        return ResponseEntity.ok(conversationService.getConversationStats(conversationId));
     }
 }

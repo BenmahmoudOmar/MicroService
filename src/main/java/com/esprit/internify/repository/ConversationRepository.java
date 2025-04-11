@@ -26,4 +26,14 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
             @Param("startOfDay") LocalDateTime startOfDay,
             @Param("endOfDay") LocalDateTime endOfDay
     );
+
+    @Query("SELECT COUNT(m), m.messageType FROM Message m WHERE m.conversation.id = :conversationId GROUP BY m.messageType")
+    List<Object[]> countMessagesByTypeInConversation(@Param("conversationId") Long conversationId);
+
+    @Query("SELECT COUNT(m) FROM Message m WHERE m.conversation.id = :conversationId")
+    Long countTotalMessagesInConversation(@Param("conversationId") Long conversationId);
+
+    @Query("SELECT m.timestamp FROM Message m WHERE m.conversation.id = :conversationId ORDER BY m.timestamp ASC")
+    List<LocalDateTime> getAllSentDatesByConversation(@Param("conversationId") Long conversationId);
+
 }

@@ -5,6 +5,7 @@ import com.esprit.internify.entities.Message;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface IConversationService {
@@ -16,4 +17,6 @@ public interface IConversationService {
     Conversation toggleFavorite(Long conversationId, Long userId);
     Conversation toggleMute(Long conversationId, Long userId);
     List<Message> searchMessagesInConversation(Long conversationId, String content, String sentDateStr);
+    List<Conversation> getAllConversations();
+    Map<String, Object> getConversationStats(Long conversationId);
 }
