@@ -328,6 +328,11 @@ public class JobSeekerService {
         return JobSeekerRepository.findByUserId(userId);
     }
 
+    public Optional<JobSeeker> getJobSeekerById(Long Id) {
+        return JobSeekerRepository.findById(Id);
+    }
+
+
     public List<JobSeeker> getJobSeekers(){
         return JobSeekerRepository.findAll();
     }

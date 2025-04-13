@@ -57,6 +57,18 @@ public class JobSeekerController {
     }
 
 
+
+
+    @GetMapping("/getJobSeekerById/{Id}")
+    public ResponseEntity<JobSeeker> getJobSeekerById(@PathVariable Long Id) {
+        return service.getJobSeekerById(Id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
+
+
     @GetMapping("/getJobSeekers")
     public List<JobSeeker> getJobSeekers() {
         return service.getJobSeekers();
@@ -67,6 +79,8 @@ public class JobSeekerController {
         service.deleteJobSeeker(id);
         return ResponseEntity.ok().build();
     }
+
+
 
 
 

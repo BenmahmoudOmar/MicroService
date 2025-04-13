@@ -326,6 +326,11 @@ public class EntrepriseService  {
             return EntrepriseRepository.findByUserId(userId);
         }
 
+    public Optional<Entreprise> getEntrepriseById(Long Id) {
+        return EntrepriseRepository.findById(Id);
+    }
+
+
     public List<Entreprise> getEntreprise(){
         return EntrepriseRepository.findAll();
     }

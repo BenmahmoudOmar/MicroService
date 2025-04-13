@@ -40,6 +40,15 @@ public class EntrepriseController {
     }
 
 
+
+    @GetMapping("/getEntrepriseById/{userId}")
+    public ResponseEntity<Entreprise> getEntrepriseById(@PathVariable Long Id) {
+        return service.getEntrepriseById(Id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteEntreprise(@PathVariable Long id) {
         service.deleteEntreprise(id);

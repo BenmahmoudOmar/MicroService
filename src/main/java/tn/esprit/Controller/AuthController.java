@@ -572,6 +572,15 @@ public class AuthController {
         return userDetailsService.findByUsername(username);
     }
 
+    @GetMapping("findById/{id}")
+    public   Optional<User> findByUsername(@PathVariable("id") Long id)
+    {
+        return userDetailsService.findById(id);
+    }
+
+
+
+
     @PutMapping("updateUser")
     public ResponseEntity<?> updateUser(@RequestBody User user) {
         return userDetailsService.updateUser(user);
